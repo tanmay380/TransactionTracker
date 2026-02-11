@@ -1,6 +1,7 @@
 package com.example.transactiontracker.sms.worker
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -17,8 +18,12 @@ class SmsWorker @AssistedInject constructor(
     private val notificationHelper: TransactionNotificationHelper
 ) :
 CoroutineWorker(context, params){
+
     override suspend fun doWork(): Result {
+        Log.d("tanmay", "doWork: ")
+
         val newTransaction = inboxReader.readLatestAndStore()
+        Log.d("tanmay", "doWork: " + newTransaction)
 
         if (newTransaction.isNotEmpty()){
             notificationHelper.show(newTransaction.first())

@@ -1,6 +1,7 @@
 package com.example.transactiontracker.data.local
 
 import com.example.transactiontracker.sms.model.ParsedTransaction
+import com.example.transactiontracker.ui.screens.cardhistory.CardTransactionUi
 import com.example.transactiontracker.utils.DateUtils
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -13,14 +14,19 @@ class TransactionRepository @Inject constructor(
         return transactionDao.getAllTransaction()
     }
 
+    fun getCardTransaction(cardNo : String) : Flow<List<TransactionEntity>>{
+        return transactionDao.getCardTransaction(cardNo)
+    }
+
     suspend fun insertTransaction(parsed: ParsedTransaction) {
         transactionDao.insertTransaction(
             TransactionEntity(
                 merchant = parsed.merchant,
-                amount = parsed.amount.toInt(),
+                amount = parsed.amount!!.toInt(),
                 cardNo = parsed.cardNo,
                 date = parsed.date,
-                bankName = parsed.bankName
+                bankName = parsed.bankName,
+                type = parsed.type
             )
         )
     }
@@ -35,17 +41,22 @@ class TransactionRepository @Inject constructor(
         return try {
             transactionDao.insertTransaction(
                 TransactionEntity(
-                    amount = parsed.amount.toInt(),
+                    amount = parsed.amount!!.toInt(),
                     merchant = parsed.merchant,
                     cardNo = parsed.cardNo,
                     date = parsed.date,
-                    bankName = parsed.bankName
+                    bankName = parsed.bankName,
+                    type = parsed.type
                 )
             )
             true
         } catch (e: Exception) {
             false // duplicate ignored
         }
+    }
+
+    suspend fun deleteEntryForThisCard(txn: CardTransactionUi) {
+        transactionDao.deleteEntryForThisCard(txn.id)
     }
 
 

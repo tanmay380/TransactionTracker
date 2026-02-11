@@ -1,6 +1,8 @@
 package com.example.transactiontracker.utils
 
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 object DateUtils {
 
@@ -22,6 +24,13 @@ object DateUtils {
             set(Calendar.SECOND, 59)
         }
         return cal.timeInMillis
+    }
+
+    fun formatDate(epoch: Long): String {
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = epoch
+        return sdf.format(calendar.time)
     }
 
 

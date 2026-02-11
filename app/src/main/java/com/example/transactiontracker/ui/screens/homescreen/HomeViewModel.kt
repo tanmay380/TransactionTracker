@@ -1,16 +1,17 @@
 package com.example.transactiontracker.ui.screens.homescreen
 
+import android.app.Application
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.transactiontracker.AppPreferences
 import com.example.transactiontracker.data.local.TransactionRepository
 import com.example.transactiontracker.sms.reader.SmsInboxReader
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -19,6 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val application: Application,
     private val transactionRepository: TransactionRepository,
     private val smsInboxReader: SmsInboxReader
 ) : ViewModel() {
@@ -35,6 +37,7 @@ class HomeViewModel @Inject constructor(
     private fun observeHomeData() {
         transactionRepository.getCurrentMonthTransaction()
             .map {
+                Log.d("tanmay", "observeHomeData: " + it.size)
                 if (it.isEmpty()){
                     HomeUiState(isLoading = false)
                 }else
@@ -62,6 +65,7 @@ class HomeViewModel @Inject constructor(
     fun onSmsPermissionGranted() {
         viewModelScope.launch {
             smsInboxReader.readAndStore()
+            AppPreferences.setFirstSyncDone(application)
         }
 
     }

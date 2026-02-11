@@ -23,7 +23,7 @@ import com.example.transactiontracker.ui.screens.components.LoadingView
 
 @Composable
 fun HomeScreen(
-    onNavigateToTransaction: () -> Unit,
+    onNavigateToTransaction: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -40,7 +40,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeContent(state: HomeUiState, onNavigateToTransaction: () -> Unit) {
+fun HomeContent(state: HomeUiState, onNavigateToTransaction: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -50,7 +50,7 @@ fun HomeContent(state: HomeUiState, onNavigateToTransaction: () -> Unit) {
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier
                     .padding(16.dp)
-                    .clickable { onNavigateToTransaction() }
+//                    .clickable { onNavigateToTransaction() }
             )
         }
 
@@ -60,7 +60,7 @@ fun HomeContent(state: HomeUiState, onNavigateToTransaction: () -> Unit) {
                     .fillMaxSize()
                     .padding(16.dp, 8.dp)
                     .clickable {
-                        onNavigateToTransaction()
+                        onNavigateToTransaction(it.cardNumber)
                     }
             ) {
                 Row(

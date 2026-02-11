@@ -7,10 +7,14 @@ import javax.inject.Inject
 class SmsParser @Inject constructor() {
      public  val TAG: String = "tanmay"
 
+
+
     fun parse(smsBody: String, date: Long): ParsedTransaction? {
         val lower = smsBody.lowercase()
 
-        if (!lower.contains("hdfc bank card") && !lower.contains("icici bank card") && !lower.contains("sbi credit card")) {
+
+
+        /*if (!lower.contains("hdfc bank card") && !lower.contains("icici bank card") && !lower.contains("sbi credit card")) {
             Log.d(TAG, "Sms not from a supported bank, returning null")
             return null
         }
@@ -48,7 +52,7 @@ class SmsParser @Inject constructor() {
             return null
         }
 
-        Log.d(TAG, "parse: " + amountRegex.find(lower))
+        Log.d(TAG, "parse: " + lower)
 
         val amountString = amountRegex.find(lower)?.groupValues?.get(1)?.replace(",", "")
         val amount = amountString?.toDoubleOrNull() ?: 0.0
@@ -58,13 +62,8 @@ class SmsParser @Inject constructor() {
 
 
         Log.d(TAG, "Parsed: Amount=$amount, Card=$cardLast4, Merchant='$merchant'")
+*/
 
-        return ParsedTransaction(
-            amount = amount,
-            merchant = merchant,
-            cardNo = cardLast4,
-            date = date,
-            bankName = bankName
-        )
+        return null
     }
 }
