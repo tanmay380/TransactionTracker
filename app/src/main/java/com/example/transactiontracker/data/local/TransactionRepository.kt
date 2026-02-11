@@ -13,14 +13,19 @@ class TransactionRepository @Inject constructor(
         return transactionDao.getAllTransaction()
     }
 
+    fun getCardTransaction(cardNo : String) : Flow<List<TransactionEntity>>{
+        return transactionDao.getCardTransaction(cardNo)
+    }
+
     suspend fun insertTransaction(parsed: ParsedTransaction) {
         transactionDao.insertTransaction(
             TransactionEntity(
                 merchant = parsed.merchant,
-                amount = parsed.amount.toInt(),
+                amount = parsed.amount!!.toInt(),
                 cardNo = parsed.cardNo,
                 date = parsed.date,
-                bankName = parsed.bankName
+                bankName = parsed.bankName,
+                type = parsed.type
             )
         )
     }
@@ -35,11 +40,12 @@ class TransactionRepository @Inject constructor(
         return try {
             transactionDao.insertTransaction(
                 TransactionEntity(
-                    amount = parsed.amount.toInt(),
+                    amount = parsed.amount!!.toInt(),
                     merchant = parsed.merchant,
                     cardNo = parsed.cardNo,
                     date = parsed.date,
-                    bankName = parsed.bankName
+                    bankName = parsed.bankName,
+                    type = parsed.type
                 )
             )
             true

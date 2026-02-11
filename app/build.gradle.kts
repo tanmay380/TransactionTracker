@@ -60,6 +60,7 @@ dependencies {
     //Hilt and Dagger
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+    ksp(libs.androidx.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
 

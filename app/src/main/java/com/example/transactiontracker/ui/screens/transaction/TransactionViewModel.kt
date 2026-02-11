@@ -1,5 +1,6 @@
 package com.example.transactiontracker.ui.screens.transaction
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.transactiontracker.data.local.TransactionRepository
@@ -27,8 +28,9 @@ class TransactionViewModel @Inject constructor(
     }
 
     private fun observeTransaction() {
-        transactionRepository.getAllTransaction()
+        transactionRepository.getCardTransaction("2640")
             .map { transaction ->
+                Log.d("tanmay", "observeTransaction: " + transaction.size)
                 if (transaction.isEmpty())
                     TransactionUiState(isLoading = false)
                 else

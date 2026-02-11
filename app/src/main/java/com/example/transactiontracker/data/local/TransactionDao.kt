@@ -20,5 +20,8 @@ interface TransactionDao {
         end: Long
     ): Flow<List<TransactionEntity>>
 
+    @Query("Select * from transactions where cardNo = :cardNo ORDER BY date DESC")
+    fun getCardTransaction(cardNo: String): Flow<List<TransactionEntity>>
+
 }
 
