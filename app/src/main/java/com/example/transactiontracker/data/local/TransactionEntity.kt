@@ -14,7 +14,8 @@ data class TransactionEntity(
     val cardNo: String,
     val date: Long,
     val bankName: String,
-    val type: TransactionType
+    val type: TransactionType,
+    val sms: String
 ) {
     fun formatDate(date: Long): Long {
         val sdf = SimpleDateFormat("dd MM yyyy", Locale.getDefault())

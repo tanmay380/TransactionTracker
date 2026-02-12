@@ -12,7 +12,8 @@ class SBIParser : BaseSmsParser() {
         "one-time",
         "declined",
         "we tried calling you to confirm the trxn.",
-        "standing instruction"
+        "standing instruction",
+        "request"
     )
 
 
@@ -50,16 +51,17 @@ class SBIParser : BaseSmsParser() {
             cardNo = last4,
             type = type,
             date = date,
-            bankName = "SBI"
+            bankName = "SBI",
+            sms = sms
         )
     }
 
     fun extractMerchant(sms: String): String {
         return when {
             sms.contains("at", true) -> {
-                sms.substringAfter("at", " ")
-                    .substringBefore("(")
-                    .substringBefore("on")
+                sms.substringAfter(" at ", " ")
+                    .substringBefore(" (")
+                    .substringBefore(" on ")
                     .trim()
             }
 

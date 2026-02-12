@@ -6,7 +6,8 @@ data class ParsedTransaction(
     val cardNo: String,
     val date: Long,
     val type: TransactionType,
-    val bankName : String
+    val bankName : String,
+    val sms: String
 ){
 
     fun toLong(): String{

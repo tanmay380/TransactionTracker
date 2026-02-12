@@ -4,15 +4,24 @@ import android.util.Log
 import com.example.transactiontracker.sms.model.ParsedTransaction
 
 class HdfcParser : BaseSmsParser() {
+
+    val forbiddenKeywords = listOf(
+        "statement",
+        "online payment of",
+        "otp",
+        "one-time",
+        "declined",
+        "online payment of",
+        "standing instruction",
+        "request"
+    )
+
     override fun canHandle(sender: String, sms: String): Boolean {
-        Log.d("tanmay", "canHandle: $sender  $sms")
-        return sender.contains("hdfc", ignoreCase = true) ||
+        val containsForbidden = forbiddenKeywords.any { sms.contains(it, ignoreCase = true) }
+        return (sender.contains("hdfc", ignoreCase = true) ||
                 sender.contains("hdfc bank", ignoreCase = true)
-                || sender.contains("9315926219", ignoreCase = true)
-                && (!sms.contains("statement")
-                || !sms.contains("online payment of")
-                || !sms.contains("hdfc bank")
-                ||!sms.contains("otp"))
+                || sender.contains("9315926219", ignoreCase = true))
+                && !containsForbidden
     }
 
     override fun parse(sms: String, date: Long): ParsedTransaction? {
@@ -23,7 +32,7 @@ class HdfcParser : BaseSmsParser() {
 
 
 
-        if (amount == null || last4 == null || merchant == "Unknown Merchant"){
+        if (amount == null || last4 == null || merchant == "Unknown Merchant") {
             return null
         }
 
@@ -36,18 +45,20 @@ class HdfcParser : BaseSmsParser() {
             cardNo = last4,
             type = type,
             date = date,
-            bankName = "HDFC"
+            bankName = "HDFC",
+            sms = sms
         )
     }
 
     fun extractMerchant(sms: String): String {
         return when {
-            sms.contains("At", true) -> {
-                sms.substringAfter("at", " ")
-                    .substringBefore("by")
-                    .substringBefore("on")
+            sms.contains("at", true) -> {
+                sms.substringAfter("at ", " ")
+                    .substringBefore("by ")
+                    .substringBefore("on ")
                     .trim()
             }
+
             else -> "Unknown Merchant"
         }
     }

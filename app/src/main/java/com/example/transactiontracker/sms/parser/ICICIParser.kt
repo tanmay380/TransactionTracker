@@ -11,7 +11,8 @@ class ICICIParser : BaseSmsParser() {
         "otp",
         "one-time",
         "declined",
-        "standing instruction"
+        "standing instruction",
+        "request"
     )
 
 
@@ -48,15 +49,23 @@ class ICICIParser : BaseSmsParser() {
             cardNo = last4,
             type = type,
             date = date,
-            bankName = "ICICI"
+            bankName = "ICICI",
+            sms = sms
         )
     }
 
     fun extractMerchant(sms: String): String {
         return when {
-            sms.contains("on", true) -> {
-                sms.substringAfter("on", " ")
-                    .substringBefore("avl")
+            sms.contains(" at ", true)->{
+                sms.substringAfter(" at ", " ")
+                    .substringBefore(" in ")
+                    .substringBefore(" avl ")
+                    .trim()
+            }
+            sms.contains(" on ", true) -> {
+                sms.substringAfterLast(" on ", "")
+                    .substringBefore(" avl ")
+                    .substringBefore(" in ")
                     .trim()
             }
             else -> "Unknown Merchant"

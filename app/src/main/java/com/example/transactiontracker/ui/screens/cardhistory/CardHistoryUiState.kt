@@ -12,5 +12,6 @@ data class CardTransactionUi(
     val merchant: String,
     val amount: Int,
     val date: Long,
-    val type : TransactionType
+    val type : TransactionType,
+    val sms: String
 )

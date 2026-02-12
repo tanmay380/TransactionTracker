@@ -33,5 +33,14 @@ object DateUtils {
         return sdf.format(calendar.time)
     }
 
+    fun formatDateWithTime(epoch: Long): String {
+        val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault())
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = epoch
+        return sdf.format(calendar.time)
+    }
+
+
+
 
 }

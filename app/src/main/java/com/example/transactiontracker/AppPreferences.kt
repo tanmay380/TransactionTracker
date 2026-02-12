@@ -13,8 +13,8 @@ object AppPreferences {
         return prefs.getBoolean(KEY_FIRST_SYNC_DONE, false)
     }
 
-    fun setFirstSyncDone(context: Context) {
+    fun setFirstSyncDone(context: Context, value: Boolean = true) {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        prefs.edit { putBoolean(KEY_FIRST_SYNC_DONE, true) }
+        prefs.edit { putBoolean(KEY_FIRST_SYNC_DONE, value) }
     }
 }

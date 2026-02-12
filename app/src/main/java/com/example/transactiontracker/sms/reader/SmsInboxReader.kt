@@ -87,6 +87,7 @@ class SmsInboxReader @Inject constructor(
 
     suspend fun readLatestAndStore(): List<ParsedTransaction> {
         val lastProcessesTime = smsSyncStore.getLastProcessedTime()
+//        Log.d("tanmay", "readLatestAndStore: ${DateUtils.formatDateWithTime(lastProcessesTime)}")
         val uri = "content://sms/inbox".toUri()
         val cursor = context.contentResolver
             .query(
@@ -94,10 +95,8 @@ class SmsInboxReader @Inject constructor(
                 arrayOf("address", "body", "date"),
                 "date > ?",
                 arrayOf(lastProcessesTime.toString()),
-                "date asc"
+                "date desc"
             ) ?: return emptyList()
-
-        Log.d("tanmay", "readLatestAndStore: ")
 
         val inserted = mutableListOf<ParsedTransaction>()
         var newestTimestamp = lastProcessesTime
@@ -107,28 +106,28 @@ class SmsInboxReader @Inject constructor(
                 val body = it.getString(it.getColumnIndexOrThrow("body"))
                 val date = it.getLong(it.getColumnIndexOrThrow("date"))
                 val address = it.getString(it.getColumnIndexOrThrow("address"))
-
+//                Log.d("tanmay"," meesage date time si  : - ${DateUtils.formatDateWithTime(date)}")
+//                Log.d("tanmay", "readLatestAndStore: $address  $body")
 
                 val parser = parsers.firstOrNull { parser ->
                     parser.canHandle(address, body.lowercase())
                 }
 
                 val transaction = parser?.parse(body.lowercase(), date)
-                Log.d("tanmay", "readLatestAndStore: " + transaction + "  " +parser)
+//                Log.d("tanmay", "readLatestAndStore: " + transaction + "  " +parser)
 
-                if (repository.insertTransactionIfNew(transaction!!)) {
-                    inserted.add(transaction)
+                transaction?.let {tx->
+                    if (repository.insertTransactionIfNew(tx)) {
+                        inserted.add(transaction)
+                    }
                 }
 
                 if (date > newestTimestamp) {
                     newestTimestamp = date
+                    smsSyncStore.saveLastProcessedTime(newestTimestamp)
                 }
             }
         }
-        if (newestTimestamp > lastProcessesTime) {
-            smsSyncStore.saveLastProcessedTime(newestTimestamp)
-        }
-
         return inserted
     }
 }

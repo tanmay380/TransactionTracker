@@ -25,7 +25,8 @@ fun List<TransactionEntity>.toCardHistoryMapper(): CardHistoryUiState {
                 merchant = it.merchant,
                 amount = it.amount,
                 date = it.date,
-                type = it.type
+                type = it.type,
+                sms = it.sms
             )
 
         }

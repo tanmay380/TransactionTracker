@@ -27,5 +27,9 @@ interface TransactionDao {
     @Query("Delete From transactions where id = :id")
     suspend fun deleteEntryForThisCard(id: Int)
 
+
+    @Query("delete from transactions")
+    suspend fun deleteAll()
+
 }
 
