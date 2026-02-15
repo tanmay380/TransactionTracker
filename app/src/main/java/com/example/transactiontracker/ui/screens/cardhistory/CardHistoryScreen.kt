@@ -73,7 +73,7 @@ fun CardHistoryScreen(
                                     if (it.type == TransactionType.DEBIT)
                                         it.amount
                                     else
-                                        -it.amount
+                                        0
                                 }
                                 Text(
                                     text = month,
@@ -91,36 +91,6 @@ fun CardHistoryScreen(
                         items(
                             txns,
                         ) { transaction ->
-                            /*Card(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(16.dp, 8.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            viewModel.deleteEntryForThisCard(txn)
-                                        },
-                                        onLongClick = {
-                                            showDialog = true
-                                            selectedSms = txn.sms
-                                        }
-                                    )
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(DateUtils.formatDate(txn.date))
-                                    Text(
-                                        txn.merchant, textAlign = TextAlign.Center,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    Text("₹${txn.amount}",
-                                        maxLines = 1,
-                                        softWrap = false)
-                                }
-                            }*/
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()

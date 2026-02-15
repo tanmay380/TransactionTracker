@@ -49,6 +49,7 @@ class TransactionNotificationHelper @Inject constructor(
             .setContentTitle("Transaction detected")
             .setContentText("₹${txn.amount} spent on ${txn.merchant}")
             .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .build()
 
         manager.notify(System.currentTimeMillis().toInt(), notification)

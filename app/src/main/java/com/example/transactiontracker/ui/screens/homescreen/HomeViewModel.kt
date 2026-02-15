@@ -64,7 +64,7 @@ class HomeViewModel @Inject constructor(
 
     fun onSmsPermissionGranted() {
         viewModelScope.launch {
-            smsInboxReader.readAndStore()
+            smsInboxReader.readLatestAndStore()
             AppPreferences.setFirstSyncDone(application)
         }
 

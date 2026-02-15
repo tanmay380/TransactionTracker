@@ -27,6 +27,7 @@ abstract class BaseSmsParser : SmsParserInterface {
         return when {
             sms.contains("credited", true) -> TransactionType.CREDIT
             sms.contains("reversal", true) -> TransactionType.CREDIT
+            sms.contains("received", true) -> TransactionType.CREDIT
             sms.contains("refund", true) -> TransactionType.CREDIT
             else -> TransactionType.DEBIT
         }

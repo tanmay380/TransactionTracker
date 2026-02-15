@@ -6,7 +6,7 @@ import com.example.transactiontracker.sms.model.TransactionType
 fun List<TransactionEntity>.toHomeUiState() : HomeUiState{
     val total = sumOf {
         if (it.type == TransactionType.DEBIT) it.amount
-        else -(it.amount)
+        else 0
     }
 
     val cardWise = groupBy { it.cardNo }
@@ -15,7 +15,7 @@ fun List<TransactionEntity>.toHomeUiState() : HomeUiState{
                 card,
                 transactions.sumOf {
                     if (it.type == TransactionType.DEBIT) it.amount
-                    else -(it.amount)
+                    else 0
                 }.toDouble(),
                 transactions.first().bankName
             )

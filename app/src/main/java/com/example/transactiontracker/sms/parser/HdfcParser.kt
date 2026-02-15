@@ -19,8 +19,7 @@ class HdfcParser : BaseSmsParser() {
     override fun canHandle(sender: String, sms: String): Boolean {
         val containsForbidden = forbiddenKeywords.any { sms.contains(it, ignoreCase = true) }
         return (sender.contains("hdfc", ignoreCase = true) ||
-                sender.contains("hdfc bank", ignoreCase = true)
-                || sender.contains("9315926219", ignoreCase = true))
+                sender.contains("hdfc bank", ignoreCase = true))
                 && !containsForbidden
     }
 
@@ -31,13 +30,11 @@ class HdfcParser : BaseSmsParser() {
         val type = detectType(sms)
 
 
-
+        Log.d("tanmay", "parse: sms is " + sms)
+        Log.d("tanmay", "parse: hdfcparser $amount  $last4  $merchant  $type")
         if (amount == null || last4 == null || merchant == "Unknown Merchant") {
             return null
         }
-
-        Log.d("tanmay", "parse: sms is " + sms)
-        Log.d("tanmay", "parse: hdfcparser $amount  $last4  $merchant  $type")
 
         return ParsedTransaction(
             merchant = merchant,

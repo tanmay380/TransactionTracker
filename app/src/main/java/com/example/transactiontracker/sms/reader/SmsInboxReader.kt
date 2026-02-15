@@ -9,7 +9,6 @@ import com.example.transactiontracker.sms.model.ParsedTransaction
 import com.example.transactiontracker.sms.parser.HdfcParser
 import com.example.transactiontracker.sms.parser.ICICIParser
 import com.example.transactiontracker.sms.parser.SBIParser
-import com.example.transactiontracker.sms.parser.SmsParser
 import com.example.transactiontracker.sms.util.SmsSyncStore
 import com.example.transactiontracker.utils.DateUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -19,7 +18,6 @@ import javax.inject.Inject
 
 class SmsInboxReader @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val smsParser: SmsParser,
     private val repository: TransactionRepository,
     private val smsSyncStore: SmsSyncStore
 ) {
@@ -78,16 +76,9 @@ class SmsInboxReader @Inject constructor(
         }
     }
 
-    private fun isFromValidAddress(address: String): Boolean {
-        val upperCaseAddress = address.uppercase(getDefault())
-        return upperCaseAddress.contains("ICICI") || upperCaseAddress.contains("HDFCBK")
-                || upperCaseAddress.contains("SBICRD")
-
-    }
-
     suspend fun readLatestAndStore(): List<ParsedTransaction> {
         val lastProcessesTime = smsSyncStore.getLastProcessedTime()
-//        Log.d("tanmay", "readLatestAndStore: ${DateUtils.formatDateWithTime(lastProcessesTime)}")
+        Log.d("tanmay", "readLatestAndStore: ${DateUtils.formatDateWithTime(lastProcessesTime)}")
         val uri = "content://sms/inbox".toUri()
         val cursor = context.contentResolver
             .query(
@@ -95,7 +86,7 @@ class SmsInboxReader @Inject constructor(
                 arrayOf("address", "body", "date"),
                 "date > ?",
                 arrayOf(lastProcessesTime.toString()),
-                "date desc"
+                "date asc"
             ) ?: return emptyList()
 
         val inserted = mutableListOf<ParsedTransaction>()
@@ -114,7 +105,6 @@ class SmsInboxReader @Inject constructor(
                 }
 
                 val transaction = parser?.parse(body.lowercase(), date)
-//                Log.d("tanmay", "readLatestAndStore: " + transaction + "  " +parser)
 
                 transaction?.let {tx->
                     if (repository.insertTransactionIfNew(tx)) {
@@ -124,8 +114,11 @@ class SmsInboxReader @Inject constructor(
 
                 if (date > newestTimestamp) {
                     newestTimestamp = date
-                    smsSyncStore.saveLastProcessedTime(newestTimestamp)
+                    smsSyncStore.saveLastProcessedTime(date)
                 }
+//                Log.d("tanmay", "readLatestAndStore: ${DateUtils.formatDateWithTime(newestTimestamp)}")
+                Log.d("tanmay", "readLatestAndStore: ${DateUtils.formatDateWithTime(smsSyncStore.getLastProcessedTime())} $transaction  $parser $body")
+
             }
         }
         return inserted

@@ -31,5 +31,15 @@ interface TransactionDao {
     @Query("delete from transactions")
     suspend fun deleteAll()
 
+    /*@Query("SELECT * FROM transactions " +
+            "WHERE strftime('%Y-%m', date / 1000, 'unixepoch') = :month " +
+            "ORDER BY     CASE    " +
+            "     WHEN type = 'DEBIT' " +
+            "THEN 0      " +
+            "  ELSE 1   " +
+            " END, " +
+            "   date DESC;")
+    suspend fun getTransactionsForCurrentMonth(): List<TransactionEntity>*/
+
 }
 

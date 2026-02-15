@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.transactiontracker.sms.worker.SmsWorker
+import java.util.concurrent.TimeUnit
 
 class SmsBroadcastReciever : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -16,7 +17,9 @@ class SmsBroadcastReciever : BroadcastReceiver() {
             return
         }
         Log.d("SmsBroadcastReciever", "onReceive: SMS received!")
-        val workRequest = OneTimeWorkRequestBuilder<SmsWorker>().build()
+        val workRequest = OneTimeWorkRequestBuilder<SmsWorker>()
+            .setInitialDelay(2, TimeUnit.SECONDS)
+            .build()
         WorkManager.getInstance(context.applicationContext).enqueue(workRequest)
         Log.d("SmsBroadcastReciever", "Work request enqueued for SmsWorker.")
     }

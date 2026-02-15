@@ -31,17 +31,16 @@ class ICICIParser : BaseSmsParser() {
         var merchant = extractMerchant(sms)
         var type = detectType(sms)
 
-        if (sms.contains("has been received on your icici bank credit card")){
-            type = TransactionType.CREDIT
+        if (type == TransactionType.CREDIT){
             merchant = "paid to card"
-        }
-
-        if (amount == null || last4 == null || merchant == "Unknown Merchant"){
-            return null
         }
 
         Log.d("tanmay", "parse: sms is " + sms)
         Log.d("tanmay", "parse: ICICI  $amount  $last4  $merchant  $type")
+        if (amount == null || last4 == null || merchant == "Unknown Merchant"){
+            return null
+        }
+
 
         return ParsedTransaction(
             merchant = merchant,

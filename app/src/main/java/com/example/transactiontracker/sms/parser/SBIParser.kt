@@ -22,7 +22,8 @@ class SBIParser : BaseSmsParser() {
             sms.contains(it, ignoreCase = true)
         }
         return (sender.contains("sbi", ignoreCase = true)
-                || sender.contains("sbi bank", ignoreCase = true))
+                || sender.contains("sbi bank", ignoreCase = true)
+                || sender.contains("9315926219", ignoreCase = true))
                 && !containsForbidden
     }
 
@@ -32,18 +33,17 @@ class SBIParser : BaseSmsParser() {
         var merchant = extractMerchant(sms)
         var type = detectType(sms)
 
-        if (sms.contains("has been successfully processed")){
+        if (type == TransactionType.CREDIT){
             last4 = "8622"
             merchant = "Paid to SBi card"
-            type = TransactionType.CREDIT
         }
+        Log.d("tanmay", "parse: sms is " + sms)
+        Log.d("tanmay", "parse: SBI  $amount  $last4  $merchant  $type")
 
         if (amount == null || last4 == null || merchant == "Unknown Merchant") {
             return null
         }
 
-        Log.d("tanmay", "parse: sms is " + sms)
-        Log.d("tanmay", "parse: SBI  $amount  $last4  $merchant  $type")
 
         return ParsedTransaction(
             merchant = merchant,
