@@ -25,10 +25,10 @@ abstract class BaseSmsParser : SmsParserInterface {
 
     protected fun detectType(sms: String): TransactionType {
         return when {
-            sms.contains("credited", true) -> TransactionType.CREDIT
-            sms.contains("reversal", true) -> TransactionType.CREDIT
+            sms.contains("reversal", true) -> TransactionType.REFUND
+            sms.contains("refund", true) -> TransactionType.REFUND
             sms.contains("received", true) -> TransactionType.CREDIT
-            sms.contains("refund", true) -> TransactionType.CREDIT
+            sms.contains("credited", true) -> TransactionType.CREDIT
             else -> TransactionType.DEBIT
         }
     }

@@ -1,5 +1,6 @@
 package com.example.transactiontracker.ui.screens.homescreen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.contentType
@@ -29,19 +31,36 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.transactiontracker.sms.permissions.SmsPermissionHandler
+import com.example.transactiontracker.sms.permissions.rememberSmsPermissionState
 import com.example.transactiontracker.ui.screens.components.EmptyView
 import com.example.transactiontracker.ui.screens.components.LoadingView
+import com.google.accompanist.permissions.rememberPermissionState
 
 
 @Composable
 fun HomeScreen(
-    onNavigateToTransaction: (String) -> Unit,
+    onNavigateToTransaction: (Array<String>) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    SmsPermissionHandler {
+    val (hasPermission, requestPermission) = rememberSmsPermissionState()
+
+    /*SmsPermissionHandler {
         viewModel.onSmsPermissionGranted()
+    }*/
+
+    Log.d("tanmay", "HomeScreen: $hasPermission")
+
+    LaunchedEffect(hasPermission) {
+        if (hasPermission)
+            viewModel.onSmsPermissionGranted()
+    }
+
+    if (!hasPermission){
+        SmsPermissionHandler(requestPermission)
+        Log.d("tanmay", "HomeScreen: inside has permission fale")
+        return
     }
 
     when {
@@ -52,9 +71,10 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeContent(state: HomeUiState, onNavigateToTransaction: (String) -> Unit) {
+fun HomeContent(state: HomeUiState, onNavigateToTransaction: (Array<String>) -> Unit) {
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .windowInsetsPadding(WindowInsets.systemBars),
         topBar = {
             Box(
@@ -76,7 +96,8 @@ fun HomeContent(state: HomeUiState, onNavigateToTransaction: (String) -> Unit) {
         }
     ) { i ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(i)
         ) {
             item {
@@ -97,7 +118,7 @@ fun HomeContent(state: HomeUiState, onNavigateToTransaction: (String) -> Unit) {
                         .fillMaxSize()
                         .padding(16.dp, 8.dp)
                         .clickable {
-                            onNavigateToTransaction(it.cardNumber)
+                            onNavigateToTransaction(arrayOf(it.bankName, it.cardNumber))
                         }
                 ) {
                     Row(

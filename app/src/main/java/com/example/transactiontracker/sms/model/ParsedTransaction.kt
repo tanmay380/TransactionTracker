@@ -7,7 +7,9 @@ data class ParsedTransaction(
     val date: Long,
     val type: TransactionType,
     val bankName : String,
-    val sms: String
+    val sms: String,
+    val cashback : Int = 0,
+    val cashBackCategory: CashBackCategory = CashBackCategory.NA,
 ){
 
     fun toLong(): String{
@@ -15,7 +17,22 @@ data class ParsedTransaction(
     }
 }
 
+enum class CashBackCategory{
+    PHONE_PE,
+    UPI,
+    ONLINE,
+    NA
+}
+
 enum class TransactionType{
     DEBIT,
-    CREDIT
+    CREDIT,
+    REFUND;
+
+    fun applySign(amount: Double) : Double{
+        return when(this){
+            TransactionType.REFUND -> -amount
+            else -> amount
+        }
+    }
 }

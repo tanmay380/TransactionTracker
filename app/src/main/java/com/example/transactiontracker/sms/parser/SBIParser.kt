@@ -1,6 +1,7 @@
 package com.example.transactiontracker.sms.parser
 
 import android.util.Log
+import com.example.transactiontracker.sms.model.CashBackCategory
 import com.example.transactiontracker.sms.model.ParsedTransaction
 import com.example.transactiontracker.sms.model.TransactionType
 
@@ -28,12 +29,13 @@ class SBIParser : BaseSmsParser() {
     }
 
     override fun parse(sms: String, date: Long): ParsedTransaction? {
+        var cashback: Pair<Int, CashBackCategory> = Pair(0, CashBackCategory.NA)
         val amount = extractAmount(sms)
         var last4 = extractCardLast4(sms)
         var merchant = extractMerchant(sms)
-        var type = detectType(sms)
+        val type = detectType(sms)
 
-        if (type == TransactionType.CREDIT){
+        if (type == TransactionType.CREDIT) {
             last4 = "8622"
             merchant = "Paid to SBi card"
         }
@@ -44,16 +46,49 @@ class SBIParser : BaseSmsParser() {
             return null
         }
 
+        if (type != TransactionType.CREDIT){
+            cashback = getCashBackAmount(amount, sms)
+            Log.d("tanmay", "getCashbackAmount: $cashback  $amount  $sms")
+        }
 
         return ParsedTransaction(
             merchant = merchant,
-            amount = amount.toDouble(),
+            amount = type.applySign(amount),
             cardNo = last4,
             type = type,
             date = date,
             bankName = "SBI",
-            sms = sms
+            sms = sms,
+            cashback = cashback.first,
+            cashBackCategory = cashback.second
         )
+    }
+
+    val list10 = listOf(
+        "phone pe",
+        "phonepe",
+        "ppbbps"
+    )
+
+    private fun getCashBackAmount(amount: Double, sms: String): Pair<Int, CashBackCategory> {
+        return when {
+            list10.any {
+                sms.contains(it, true)
+            } -> {
+                Pair(
+                    amount.div(100).toInt().times(10),
+                    CashBackCategory.PHONE_PE
+                )
+            }
+
+            sms.contains("upi", true) -> {
+                Pair(
+                    amount.div(100).toInt().times(1),
+                    CashBackCategory.UPI
+                )
+            }
+            else -> Pair(amount.div(100).toInt().times(5), CashBackCategory.ONLINE)
+        }
     }
 
     fun extractMerchant(sms: String): String {

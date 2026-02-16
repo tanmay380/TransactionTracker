@@ -27,7 +27,9 @@ class TransactionRepository @Inject constructor(
                 date = parsed.date,
                 bankName = parsed.bankName,
                 type = parsed.type,
-                sms = parsed.sms
+                sms = parsed.sms,
+                cashBackCategory = parsed.cashBackCategory,
+                cashBack = parsed.cashback
             )
         )
     }

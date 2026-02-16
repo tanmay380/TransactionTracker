@@ -2,6 +2,7 @@ package com.example.transactiontracker.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.transactiontracker.sms.model.CashBackCategory
 import com.example.transactiontracker.sms.model.TransactionType
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -15,7 +16,9 @@ data class TransactionEntity(
     val date: Long,
     val bankName: String,
     val type: TransactionType,
-    val sms: String
+    val sms: String,
+    val cashBackCategory: CashBackCategory = CashBackCategory.NA,
+    val cashBack: Int? = 0
 ) {
     fun formatDate(date: Long): Long {
         val sdf = SimpleDateFormat("dd MM yyyy", Locale.getDefault())

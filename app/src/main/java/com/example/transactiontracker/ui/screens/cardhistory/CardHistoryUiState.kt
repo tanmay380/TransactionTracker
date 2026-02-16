@@ -1,5 +1,6 @@
 package com.example.transactiontracker.ui.screens.cardhistory
 
+import com.example.transactiontracker.sms.model.CashBackCategory
 import com.example.transactiontracker.sms.model.TransactionType
 
 data class CardHistoryUiState (
@@ -13,5 +14,7 @@ data class CardTransactionUi(
     val amount: Int,
     val date: Long,
     val type : TransactionType,
-    val sms: String
+    val sms: String,
+    val cashBackCategory : CashBackCategory,
+    val cashback: Int = 0
 )
