@@ -3,6 +3,7 @@ package com.example.transactiontracker.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.transactiontracker.sms.model.CashBackCategory
+import com.example.transactiontracker.sms.model.ParsedTransaction
 import com.example.transactiontracker.sms.model.TransactionType
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -23,5 +24,8 @@ data class TransactionEntity(
     fun formatDate(date: Long): Long {
         val sdf = SimpleDateFormat("dd MM yyyy", Locale.getDefault())
         return sdf.format(date).toLong()
+    }
+    fun removeCashback() : TransactionEntity{
+        return this.copy(cashBack = 0, cashBackCategory = CashBackCategory.NA)
     }
 }

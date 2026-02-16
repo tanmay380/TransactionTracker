@@ -5,6 +5,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
+import com.example.transactiontracker.sms.model.ParsedTransaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -30,6 +32,12 @@ interface TransactionDao {
 
     @Query("delete from transactions")
     suspend fun deleteAll()
+
+    @Update
+    suspend fun update(toParsedTransaction: ParsedTransaction)
+
+    @Query("select * from transactions where id = :id")
+    fun getTransactionDetailsById(id: Int): TransactionEntity
 
     /*@Query("SELECT * FROM transactions " +
             "WHERE strftime('%Y-%m', date / 1000, 'unixepoch') = :month " +

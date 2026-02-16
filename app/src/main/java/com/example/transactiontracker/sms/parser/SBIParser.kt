@@ -46,7 +46,7 @@ class SBIParser : BaseSmsParser() {
             return null
         }
 
-        if (type != TransactionType.CREDIT){
+        if (type != TransactionType.CREDIT) {
             cashback = getCashBackAmount(amount, sms)
             Log.d("tanmay", "getCashbackAmount: $cashback  $amount  $sms")
         }
@@ -72,6 +72,13 @@ class SBIParser : BaseSmsParser() {
 
     private fun getCashBackAmount(amount: Double, sms: String): Pair<Int, CashBackCategory> {
         return when {
+            sms.contains("fuel", true) -> {
+                Pair(
+                    0,
+                    CashBackCategory.NA
+                )
+            }
+
             list10.any {
                 sms.contains(it, true)
             } -> {
@@ -87,6 +94,7 @@ class SBIParser : BaseSmsParser() {
                     CashBackCategory.UPI
                 )
             }
+
             else -> Pair(amount.div(100).toInt().times(5), CashBackCategory.ONLINE)
         }
     }

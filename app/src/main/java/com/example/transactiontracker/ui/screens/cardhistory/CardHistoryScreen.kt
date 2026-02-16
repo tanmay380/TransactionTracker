@@ -63,7 +63,8 @@ fun CardHistoryScreen(
     bankName: String,
     onBackClickPress: () -> Unit,
     state: CardHistoryUiState,
-    onDelete: (CardTransactionUi) -> Unit
+    onDelete: (CardTransactionUi) -> Unit,
+    onUpdate: (CardTransactionUi) -> Unit
 ) {
     var showDialog by remember {
         mutableStateOf(false)
@@ -130,6 +131,9 @@ fun CardHistoryScreen(
                                 onLongClick = {
                                     selectedSms = transaction.sms
                                     showDialog = true
+                                },
+                                updateCashbackPoints = {
+                                    onUpdate(it)
                                 }
                             )
 
@@ -227,15 +231,16 @@ private fun MonthlyHeader(
 private fun IndividualCardTransaction(
     transaction: CardTransactionUi,
     onDeleteClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    updateCashbackPoints: (CardTransactionUi) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp)
             .combinedClickable(
-                onClick = onDeleteClick,
-                onLongClick = onLongClick
+                onClick = onLongClick,
+                onLongClick = onDeleteClick
             ),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(2.dp)
@@ -266,7 +271,11 @@ private fun IndividualCardTransaction(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     if (transaction.cashback > 0)
-                        Text(
+                        Text(modifier = Modifier.clickable(
+                            onClick = {
+                                updateCashbackPoints(transaction)
+                            }
+                        ),
                             text = "* ${transaction.cashback}",
                             color = Color(0xFF4CAF50),
                             textAlign = TextAlign.Center
@@ -305,6 +314,9 @@ fun CardScreenRoute(
         state,
         onDelete = {
             viewModel.deleteEntryForThisCard(it)
+        },
+        onUpdate = {
+            viewModel.updateCashbackPoints(it)
         }
     )
 }
@@ -343,6 +355,6 @@ fun CardScreenPreview() {
             ),
             false
         ),
-        {}
+        {},{}
     )
 }

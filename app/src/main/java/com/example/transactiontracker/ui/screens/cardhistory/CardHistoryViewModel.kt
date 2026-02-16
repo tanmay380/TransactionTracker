@@ -51,10 +51,17 @@ class CardHistoryViewModel @Inject constructor(
                 }
             }
     }
-
+    //TODO: only send int instead of the full object
     fun deleteEntryForThisCard(txn: CardTransactionUi) {
         viewModelScope.launch {
             repository.deleteEntryForThisCard(txn)
+        }
+    }
+
+    fun updateCashbackPoints(it: CardTransactionUi) {
+        viewModelScope.launch {
+            val txnInfo = repository.getTransactionDetailsById(it.id)
+            repository.update(txnInfo.copy())
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.transactiontracker.ui.screens.cardhistory
 
 import com.example.transactiontracker.sms.model.CashBackCategory
+import com.example.transactiontracker.sms.model.ParsedTransaction
 import com.example.transactiontracker.sms.model.TransactionType
 
 data class CardHistoryUiState (
@@ -17,4 +18,18 @@ data class CardTransactionUi(
     val sms: String,
     val cashBackCategory : CashBackCategory,
     val cashback: Int = 0
-)
+) {
+    fun toParsedTransaction(cardId: String): ParsedTransaction {
+        return ParsedTransaction(
+            merchant = merchant,
+            amount = amount.toDouble(),
+            cardNo = cardId,
+            date = date,
+            type = type,
+            bankName = TODO(),
+            sms = TODO(),
+            cashback = TODO(),
+            cashBackCategory = TODO(),
+        )
+    }
+}

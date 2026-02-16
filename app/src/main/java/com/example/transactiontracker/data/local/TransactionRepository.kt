@@ -1,5 +1,6 @@
 package com.example.transactiontracker.data.local
 
+import androidx.room.Update
 import com.example.transactiontracker.sms.model.ParsedTransaction
 import com.example.transactiontracker.ui.screens.cardhistory.CardTransactionUi
 import com.example.transactiontracker.utils.DateUtils
@@ -64,8 +65,17 @@ class TransactionRepository @Inject constructor(
         transactionDao.deleteEntryForThisCard(txn.id)
     }
 
+    suspend fun getTransactionDetailsById(id: Int): TransactionEntity {
+        return transactionDao.getTransactionDetailsById(id)
+    }
+})
+
     suspend fun deleteAll(){
         transactionDao.deleteAll()
+    }
+
+    suspend fun update(toParsedTransaction: ParsedTransaction) {
+        transactionDao.update(toParsedTransaction)
     }
 
 
