@@ -1,19 +1,30 @@
 package com.example.transactiontracker.ui.screens.cardhistory
 
+import android.widget.ImageButton
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,21 +40,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.transactiontracker.R
 import com.example.transactiontracker.sms.model.TransactionType
 import com.example.transactiontracker.ui.screens.components.EmptyView
 import com.example.transactiontracker.ui.screens.components.LoadingView
 import com.example.transactiontracker.utils.DateUtils
+import kotlin.math.abs
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CardHistoryScreen(
     cardLast4: String,
+    bankName: String,
+    onBackClickPress: () -> Unit,
     viewModel: CardHistoryViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -58,8 +75,40 @@ fun CardHistoryScreen(
         state.isLoading -> LoadingView()
         state.groupedTransaction.isEmpty() -> EmptyView("No transactions")
         else -> {
-            Scaffold() { i ->
-                LazyColumn {
+            Scaffold(
+                modifier = Modifier.fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.systemBars),
+                topBar = {
+                    Box(
+                        modifier = Modifier.background(Color.Gray)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.outline_align_flex_center_24),
+                                contentDescription = "Back Press",
+                                modifier = Modifier.padding(6.dp)
+                                    .clickable(onClick = {
+                                        onBackClickPress()
+                                    })
+                            )
+                            Text(
+                                bankName + " - " + cardLast4,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.headlineMedium
+                            )
+                        }
+                    }
+                }
+            ) { i ->
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(i)
+                ) {
                     state.groupedTransaction.forEach { (month, txns) ->
 
                         item {
@@ -70,10 +119,9 @@ fun CardHistoryScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 val total = txns.sumOf {
-                                    if (it.type == TransactionType.DEBIT)
+                                    if (it.type != TransactionType.CREDIT )
                                         it.amount
-                                    else
-                                        0
+                                    else 0
                                 }
                                 Text(
                                     text = month,
@@ -135,14 +183,14 @@ fun CardHistoryScreen(
 
                                     Text(
                                         text = if (transaction.type == TransactionType.DEBIT){
-                                            "₹${transaction.amount}"
+                                            "₹${abs( transaction.amount)}"
                                         }
                                         else {
-                                            "+₹${transaction.amount}"
+                                            "+₹${abs(transaction.amount)}"
                                              },
                                         style = MaterialTheme.typography.bodyLarge,
                                         fontWeight = FontWeight.SemiBold,
-                                        color = if (transaction.type == TransactionType.CREDIT){
+                                        color = if (transaction.type != TransactionType.DEBIT){
                                             Color(0xFF2E7D32)
                                         } else {
                                             MaterialTheme.colorScheme.onSurface

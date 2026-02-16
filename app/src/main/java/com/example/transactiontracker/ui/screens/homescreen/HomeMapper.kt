@@ -2,10 +2,12 @@ package com.example.transactiontracker.ui.screens.homescreen
 
 import com.example.transactiontracker.data.local.TransactionEntity
 import com.example.transactiontracker.sms.model.TransactionType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-fun List<TransactionEntity>.toHomeUiState() : HomeUiState{
+suspend fun List<TransactionEntity>.toHomeUiState() : HomeUiState{
     val total = sumOf {
-        if (it.type == TransactionType.DEBIT) it.amount
+        if (it.type != TransactionType.CREDIT) it.amount
         else 0
     }
 
@@ -14,7 +16,7 @@ fun List<TransactionEntity>.toHomeUiState() : HomeUiState{
             CardWiseTotal(
                 card,
                 transactions.sumOf {
-                    if (it.type == TransactionType.DEBIT) it.amount
+                    if (it.type != TransactionType.CREDIT) it.amount
                     else 0
                 }.toDouble(),
                 transactions.first().bankName

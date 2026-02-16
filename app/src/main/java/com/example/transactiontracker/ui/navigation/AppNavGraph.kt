@@ -14,8 +14,8 @@ import com.example.transactiontracker.ui.screens.transaction.TransactionScreen
 @Composable
 fun AppNavGraph(
     navController: NavHostController = rememberNavController()
-){
-    NavHost (
+) {
+    NavHost(
         navController = navController,
         startDestination = NavRoutes.HOME
     )
@@ -23,7 +23,7 @@ fun AppNavGraph(
         composable(NavRoutes.HOME) {
             HomeScreen(
                 onNavigateToTransaction = { cardNo ->
-                    navController.navigate("${NavRoutes.CARD_HISTORY}/$cardNo")
+                    navController.navigate("${NavRoutes.CARD_HISTORY}/${cardNo[0]}/${cardNo[1]}")
                 }
             )
         }
@@ -33,14 +33,22 @@ fun AppNavGraph(
         composable(NavRoutes.STATS) {
 
         }
-        composable("${NavRoutes.CARD_HISTORY}/{cardNumber}",
+        composable(
+            "${NavRoutes.CARD_HISTORY}/{bankName}/{cardNumber}",
             arguments = listOf(
-                navArgument("cardNumber"){
+                navArgument("cardNumber") {
+                    type = NavType.StringType
+                },
+                navArgument("bankName") {
                     type = NavType.StringType
                 }
-            )) {
+            )
+        ) {
             val cardNo = it.arguments?.getString("cardNumber")!!
-            CardHistoryScreen(cardNo)
+            val bankName = it.arguments?.getString("bankName")!!
+            CardHistoryScreen(cardNo, bankName,onBackClickPress = {
+                navController.navigateUp()
+            })
         }
 
 

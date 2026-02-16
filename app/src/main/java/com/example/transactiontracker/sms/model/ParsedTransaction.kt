@@ -17,5 +17,13 @@ data class ParsedTransaction(
 
 enum class TransactionType{
     DEBIT,
-    CREDIT
+    CREDIT,
+    REFUND;
+
+    fun applySign(amount: Double) : Double{
+        return when(this){
+            TransactionType.REFUND -> -amount
+            else -> amount
+        }
+    }
 }

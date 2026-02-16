@@ -47,7 +47,7 @@ class SBIParser : BaseSmsParser() {
 
         return ParsedTransaction(
             merchant = merchant,
-            amount = amount.toDouble(),
+            amount = type.applySign(amount),
             cardNo = last4,
             type = type,
             date = date,

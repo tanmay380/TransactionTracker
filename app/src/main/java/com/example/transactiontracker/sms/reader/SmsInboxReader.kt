@@ -2,6 +2,7 @@ package com.example.transactiontracker.sms.reader
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.DisposableEffect
 import androidx.core.net.toUri
 import com.example.transactiontracker.AppPreferences
 import com.example.transactiontracker.data.local.TransactionRepository
@@ -12,6 +13,8 @@ import com.example.transactiontracker.sms.parser.SBIParser
 import com.example.transactiontracker.sms.util.SmsSyncStore
 import com.example.transactiontracker.utils.DateUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 import java.util.Locale.getDefault
 import javax.inject.Inject
@@ -35,8 +38,8 @@ class SmsInboxReader @Inject constructor(
     }
 
 
-    suspend fun readAndStore() {
-        if (AppPreferences.isFirstSyncDone(context)) return
+    suspend fun readAndStore() = withContext(Dispatchers.IO){
+        if (AppPreferences.isFirstSyncDone(context)) return@withContext
 
         val uri = "content://sms/inbox".toUri()
         val cursor = context
@@ -51,7 +54,7 @@ class SmsInboxReader @Inject constructor(
                 null,
                 "date desc"
             )
-            ?: return
+            ?: return@withContext
         cursor.use {
             while (it.moveToNext()) {
                 val address = it.getString(it.getColumnIndexOrThrow("address"))
@@ -76,7 +79,7 @@ class SmsInboxReader @Inject constructor(
         }
     }
 
-    suspend fun readLatestAndStore(): List<ParsedTransaction> {
+    suspend fun readLatestAndStore(): List<ParsedTransaction> = withContext(Dispatchers.IO){
         val lastProcessesTime = smsSyncStore.getLastProcessedTime()
         Log.d("tanmay", "readLatestAndStore: ${DateUtils.formatDateWithTime(lastProcessesTime)}")
         val uri = "content://sms/inbox".toUri()
@@ -87,7 +90,7 @@ class SmsInboxReader @Inject constructor(
                 "date > ?",
                 arrayOf(lastProcessesTime.toString()),
                 "date asc"
-            ) ?: return emptyList()
+            ) ?: return@withContext emptyList()
 
         val inserted = mutableListOf<ParsedTransaction>()
         var newestTimestamp = lastProcessesTime
@@ -121,6 +124,6 @@ class SmsInboxReader @Inject constructor(
 
             }
         }
-        return inserted
+        return@withContext inserted
     }
 }
