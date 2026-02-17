@@ -270,7 +270,7 @@ private fun IndividualCardTransaction(
                         color = Color.Gray
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    if (transaction.cashback > 0)
+                    if (transaction.cashback != 0)
                         Text(modifier = Modifier.clickable(
                             onClick = {
                                 updateCashbackPoints(transaction)
@@ -316,7 +316,7 @@ fun CardScreenRoute(
             viewModel.deleteEntryForThisCard(it)
         },
         onUpdate = {
-            viewModel.updateCashbackPoints(it)
+            viewModel.updateCashbackPoints(it.id)
         }
     )
 }

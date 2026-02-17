@@ -33,8 +33,8 @@ interface TransactionDao {
     @Query("delete from transactions")
     suspend fun deleteAll()
 
-    @Update
-    suspend fun update(toParsedTransaction: ParsedTransaction)
+    @Query("update transactions set cashBack = 0 , cashBackCategory = 'NA' where id = :id")
+    suspend fun update(id: Int)
 
     @Query("select * from transactions where id = :id")
     fun getTransactionDetailsById(id: Int): TransactionEntity

@@ -58,10 +58,9 @@ class CardHistoryViewModel @Inject constructor(
         }
     }
 
-    fun updateCashbackPoints(it: CardTransactionUi) {
+    fun updateCashbackPoints(it: Int) {
         viewModelScope.launch {
-            val txnInfo = repository.getTransactionDetailsById(it.id)
-            repository.update(txnInfo.copy())
+            repository.update(it)
         }
     }
 

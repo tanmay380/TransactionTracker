@@ -7,13 +7,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.transactiontracker.ui.screens.cardhistory.CardHistoryScreen
 import com.example.transactiontracker.ui.screens.cardhistory.CardScreenRoute
 import com.example.transactiontracker.ui.screens.homescreen.HomeScreen
 import com.example.transactiontracker.ui.screens.transaction.TransactionScreen
 
 @Composable
 fun AppNavGraph(
+    requestPermission: ((Boolean, Boolean, Boolean) -> Unit) -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(
@@ -23,6 +23,7 @@ fun AppNavGraph(
     {
         composable(NavRoutes.HOME) {
             HomeScreen(
+                requestPermission = requestPermission,
                 onNavigateToTransaction = { cardNo ->
                     navController.navigate("${NavRoutes.CARD_HISTORY}/${cardNo[0]}/${cardNo[1]}")
                 }

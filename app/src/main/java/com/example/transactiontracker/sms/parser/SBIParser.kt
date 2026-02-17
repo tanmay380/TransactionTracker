@@ -30,7 +30,7 @@ class SBIParser : BaseSmsParser() {
 
     override fun parse(sms: String, date: Long): ParsedTransaction? {
         var cashback: Pair<Int, CashBackCategory> = Pair(0, CashBackCategory.NA)
-        val amount = extractAmount(sms)
+        var amount = extractAmount(sms)
         var last4 = extractCardLast4(sms)
         var merchant = extractMerchant(sms)
         val type = detectType(sms)
@@ -39,21 +39,23 @@ class SBIParser : BaseSmsParser() {
             last4 = "8622"
             merchant = "Paid to SBi card"
         }
-        Log.d("tanmay", "parse: sms is " + sms)
-        Log.d("tanmay", "parse: SBI  $amount  $last4  $merchant  $type")
+//        Log.d("tanmay", "parse: sms is " + sms)
+//        Log.d("tanmay", "parse: SBI  $amount  $last4  $merchant  $type")
 
         if (amount == null || last4 == null || merchant == "Unknown Merchant") {
             return null
         }
 
+        amount = type.applySign(amount)
+
         if (type != TransactionType.CREDIT) {
             cashback = getCashBackAmount(amount, sms)
-            Log.d("tanmay", "getCashbackAmount: $cashback  $amount  $sms")
+//            Log.d("tanmay", "getCashbackAmount: $cashback  $amount  $sms")
         }
 
         return ParsedTransaction(
             merchant = merchant,
-            amount = type.applySign(amount),
+            amount = amount,
             cardNo = last4,
             type = type,
             date = date,

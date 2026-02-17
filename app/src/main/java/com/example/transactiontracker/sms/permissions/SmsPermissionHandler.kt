@@ -1,5 +1,6 @@
 package com.example.transactiontracker.sms.permissions
 
+import android.Manifest
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -13,17 +14,25 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SmsPermissionHandler(onPermissionGranted: () -> Unit) {
-    val permissionState = rememberPermissionState(
-        android.Manifest.permission.READ_SMS
-    )
+fun SmsPermissionHandler(
+    onPermissionGranted: Boolean,
+    hasNotificationPermission: Boolean,
+    requestNotificationPermission: () -> Unit,
+    requestPermission1: () -> Unit
+) {
 
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     )
     {
-        Button(onClick = onPermissionGranted) {
+        Button(onClick = {
+            if (!onPermissionGranted)
+                requestPermission1()
+            else if (!hasNotificationPermission)
+                requestNotificationPermission()
+        }
+        ) {
             Text("Allow SMS Access")
         }
     }
@@ -33,7 +42,7 @@ fun SmsPermissionHandler(onPermissionGranted: () -> Unit) {
 @Composable
 fun rememberSmsPermissionState(): Pair<Boolean, () -> Unit> {
     val permissionState = rememberPermissionState(
-        android.Manifest.permission.READ_SMS
+        Manifest.permission.READ_SMS
     )
     val hasPermission = permissionState.status.isGranted
 
@@ -43,4 +52,20 @@ fun rememberSmsPermissionState(): Pair<Boolean, () -> Unit> {
 
     return Pair(hasPermission, requestPermission)
 
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun rememberNotificationPermissionState(): Pair<Boolean, () -> Unit> {
+    val permissionState = rememberPermissionState(
+        Manifest.permission.POST_NOTIFICATIONS
+    )
+
+    val hasPermission = permissionState.status.isGranted
+
+    val requestPermission = {
+        permissionState.launchPermissionRequest()
+    }
+
+    return Pair(hasPermission, requestPermission)
 }

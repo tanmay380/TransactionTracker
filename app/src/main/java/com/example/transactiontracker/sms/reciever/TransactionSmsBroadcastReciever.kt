@@ -12,11 +12,11 @@ import java.util.concurrent.TimeUnit
 
 class TransactionSmsBroadcastReciever : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("TransactionSmsBroadcastReceiver", "onReceive: SMS received! $intent")
         if (intent.action != Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
             Log.d("TransactionSmsBroadcastReceiver", "Incorrect intent action: ${intent.action}")
             return
         }
-        Log.d("TransactionSmsBroadcastReceiver", "onReceive: SMS received!")
         val workRequest = OneTimeWorkRequestBuilder<SmsWorker>()
             .setInitialDelay(2, TimeUnit.SECONDS)
             .build()

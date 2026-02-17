@@ -30,8 +30,8 @@ class HdfcParser : BaseSmsParser() {
         val type = detectType(sms)
 
 
-        Log.d("tanmay", "parse: sms is " + sms)
-        Log.d("tanmay", "parse: hdfcparser $amount  $last4  $merchant  $type")
+//        Log.d("tanmay", "parse: sms is " + sms)
+//        Log.d("tanmay", "parse: hdfcparser $amount  $last4  $merchant  $type")
         if (amount == null || last4 == null || merchant == "Unknown Merchant") {
             return null
         }
